@@ -52,6 +52,9 @@ class StackView extends React.Component {
         {...navigationConfig}
         screenProps={screenProps}
         sceneDescriptors={this.props.sceneDescriptors}
+        onGestureBegin={this.props.onGestureBegin}
+        onGestureCanceled={this.props.onGestureCanceled}
+        onGestureEnd={this.props.onGestureEnd}
         {...props}
       />
     );
