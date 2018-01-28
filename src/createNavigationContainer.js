@@ -10,9 +10,10 @@ import invariant from './utils/invariant';
  * This allows to use e.g. the StackNavigator and TabNavigator as root-level
  * components.
  */
-export default function createNavigationContainer(Component) {
+export default function createNavigationContainer(Component, name) {
   class NavigationContainer extends React.Component {
     subs = null;
+    static displayName = `${name}NavigationContainer`;
 
     static router = Component.router;
     static navigationOptions = null;

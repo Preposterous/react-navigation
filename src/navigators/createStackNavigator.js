@@ -4,7 +4,7 @@ import createNavigator from './createNavigator';
 import StackView from '../views/StackView/StackView';
 import StackRouter from '../routers/StackRouter';
 
-function createStackNavigator(routeConfigMap, stackConfig = {}) {
+function createStackNavigator(routeConfigMap, stackConfig = {}, name = '') {
   const {
     initialRouteName,
     initialRouteParams,
@@ -22,10 +22,15 @@ function createStackNavigator(routeConfigMap, stackConfig = {}) {
   const router = StackRouter(routeConfigMap, stackRouterConfig);
 
   // Create a navigator with StackView as the view
-  const Navigator = createNavigator(StackView, router, stackConfig);
+  const Navigator = createNavigator(
+    StackView,
+    router,
+    stackConfig,
+    `${name}Stack`
+  );
 
   // HOC to provide the navigation prop for the top-level navigator (when the prop is missing)
-  return createNavigationContainer(Navigator);
+  return createNavigationContainer(Navigator, `${name}Stack`);
 }
 
 export default createStackNavigator;

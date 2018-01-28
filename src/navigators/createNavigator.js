@@ -3,8 +3,9 @@ import React from 'react';
 import getChildEventSubscriber from '../getChildEventSubscriber';
 import addNavigationHelpers from '../addNavigationHelpers';
 
-function createNavigator(NavigatorView, router, navigationConfig) {
+function createNavigator(NavigatorView, router, navigationConfig, name = '') {
   class Navigator extends React.Component {
+    static displayName = `${name}Navigator`;
     static router = router;
     static navigationOptions = null;
 
