@@ -131,7 +131,9 @@ class Transitioner extends React.Component {
     // the transition is ended.
     if (!animations.length) {
       this._isTransitionRunning = false;
-      this.setState(nextState);
+      this.setState(nextState, () => {
+        this._onTransitionEnd(false);
+      });
       return;
     }
 
@@ -187,7 +189,7 @@ class Transitioner extends React.Component {
     this.setState(nextState);
   }
 
-  _onTransitionEnd() {
+  _onTransitionEnd(fireCallback = true) {
     if (!this._isMounted) {
       return;
     }
@@ -202,7 +204,7 @@ class Transitioner extends React.Component {
     this._transitionProps = buildTransitionProps(this.props, nextState);
 
     this.setState(nextState, async () => {
-      if (this.props.onTransitionEnd) {
+      if (this.props.onTransitionEnd && fireCallback) {
         const result = this.props.onTransitionEnd(
           this._transitionProps,
           prevTransitionProps
