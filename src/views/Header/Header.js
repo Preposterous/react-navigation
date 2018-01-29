@@ -251,6 +251,8 @@ class Header extends React.PureComponent {
     if (options.headerVisible === false) {
       return null;
     }
+
+    const headerInnerStyle = options.headerInnerStyle || {};
     const left = this._renderLeft(props);
     const right = this._renderRight(props);
     const title = this._renderTitle(props, {
@@ -260,11 +262,14 @@ class Header extends React.PureComponent {
 
     return (
       <View
-        style={[StyleSheet.absoluteFill, styles.header]}
-        key={`scene_${props.scene.key}`}>
-        {title}
-        {left}
-        {right}
+        style={[StyleSheet.absoluteFill, styles.header, headerInnerStyle]}
+        key={`scene_${props.scene.key}`}
+      >
+        <View style={{ flex: 1 }}>
+          {title}
+          {left}
+          {right}
+        </View>
       </View>
     );
   }
