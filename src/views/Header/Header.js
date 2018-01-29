@@ -21,6 +21,7 @@ const TITLE_OFFSET = Platform.OS === 'ios' ? 70 : 56;
 
 class Header extends React.PureComponent {
   static defaultProps = {
+    layoutInterpolator: HeaderStyleInterpolator.forLayout,
     leftInterpolator: HeaderStyleInterpolator.forLeft,
     titleInterpolator: HeaderStyleInterpolator.forCenter,
     rightInterpolator: HeaderStyleInterpolator.forRight,
@@ -35,6 +36,12 @@ class Header extends React.PureComponent {
 
   state = {
     widths: {},
+  };
+
+  _handleOnLayout = e => {
+    if (typeof this.props.onLayout === 'function') {
+      this.props.onLayout(e.nativeEvent.layout);
+    }
   };
 
   _getHeaderTitleString(scene) {
@@ -103,7 +110,8 @@ class Header extends React.PureComponent {
       <RenderedHeaderTitle
         onLayout={onLayoutIOS}
         allowFontScaling={allowFontScaling == null ? true : allowFontScaling}
-        style={[color ? { color } : null, titleStyle]}>
+        style={[color ? { color } : null, titleStyle]}
+      >
         {titleString}
       </RenderedHeaderTitle>
     );
@@ -231,13 +239,18 @@ class Header extends React.PureComponent {
             ...this.props,
             ...props,
           }),
-        ]}>
+        ]}
+      >
         {subView}
       </Animated.View>
     );
   }
 
   _renderHeader(props) {
+    const { options } = props.scene.screenDescriptor;
+    if (options.headerVisible === false) {
+      return null;
+    }
     const left = this._renderLeft(props);
     const right = this._renderRight(props);
     const title = this._renderTitle(props, {
@@ -296,10 +309,15 @@ class Header extends React.PureComponent {
     ];
 
     return (
-      <Animated.View {...rest}>
+      <Animated.View
+        {...rest}
+        style={[{ ...this.props.layoutInterpolator(this.props) }]}
+        onLayout={this._handleOnLayout}
+      >
         <SafeAreaView
           style={containerStyles}
-          forceInset={{ top: 'always', bottom: 'never' }}>
+          forceInset={{ top: 'always', bottom: 'never' }}
+        >
           <View style={styles.appBar}>{appBar}</View>
         </SafeAreaView>
       </Animated.View>

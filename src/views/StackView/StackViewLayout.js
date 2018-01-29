@@ -84,7 +84,15 @@ class StackViewLayout extends React.Component {
       return header;
     }
 
-    const renderHeader = header || ((props: *) => <Header {...props} />);
+    if (options.headerVisible === false && headerMode === 'screen') {
+      return null;
+    }
+
+    const renderHeader =
+      header ||
+      ((props: *) => (
+        <Header onLayout={layout => (this._headerLayout = layout)} {...props} />
+      ));
     const {
       headerLeftInterpolator,
       headerTitleInterpolator,
@@ -148,6 +156,7 @@ class StackViewLayout extends React.Component {
         navigation.dispatch(
           NavigationActions.back({ key: backFromScene.route.key })
         );
+        navigation.dispatch(NavigationActions.completeTransition());
       }
     });
   }
@@ -379,12 +388,24 @@ class StackViewLayout extends React.Component {
     const style =
       screenInterpolator && screenInterpolator({ ...this.props, scene });
 
+    // If this screen has "headerVisible" set to false, but
+    // it exists in a stack with headerMode float, add a negative margin to
+    // compensate for the hidden header
+    const { screenDescriptor } = scene;
+    const hasHeader = screenDescriptor.options.headerVisible !== false;
+    const headerMode = this._getHeaderMode();
+    let marginTop = 0;
+    if (!hasHeader && headerMode === 'float' && this._headerLayout) {
+      marginTop = -this._headerLayout.height;
+    }
+
     return (
       <Card
         {...this.props}
         key={`card_${scene.key}`}
-        style={[style, this.props.cardStyle]}
-        scene={scene}>
+        style={[style, { marginTop }, this.props.cardStyle]}
+        scene={scene}
+      >
         {this._renderInnerScene(scene)}
       </Card>
     );
